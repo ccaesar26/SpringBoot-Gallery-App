@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+  <title>Create New Album</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container mx-auto p-4 space-y-8">
+    <!-- Page Header -->
+    <div class="text-2xl font-bold text-gray-100">Create a New Album</div>
+
+    <!-- Album Creation Form -->
+    <form th:action="@{/create-album}" method="post" enctype="multipart/form-data"
+          class="bg-gray-800 p-6 rounded-lg shadow-md space-y-6">
+      <!-- Album Title -->
+      <div>
+        <label for="title" class="block text-gray-300 font-semibold mb-2">Album Title</label>
+        <input type="text" id="title" name="title"
+               class="w-full p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-indigo-500"
+               placeholder="Enter album title" required />
+      </div>
+
+      <!-- Photo Upload -->
+      <div>
+        <label for="photos" class="block text-gray-300 font-semibold mb-2">Upload Photos</label>
+        <input type="file" id="photos" name="photos" multiple
+               class="block w-full text-gray-300 bg-gray-700 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:text-gray-100 hover:file:bg-indigo-700" />
+        <p class="mt-2 text-sm text-gray-400">You can upload multiple photos.</p>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end">
+        <button type="submit"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+          Create Album
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

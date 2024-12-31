@@ -1,7 +1,7 @@
 package com.example.rest_api.controller;
 
-import com.example.rest_api.database.model.h2.UserEntity;
-import com.example.rest_api.service.UserService;
+import com.example.rest_api.users.database.model.UserEntity;
+import com.example.rest_api.users.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

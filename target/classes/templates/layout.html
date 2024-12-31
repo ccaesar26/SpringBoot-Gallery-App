@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>Lab. Model - Admin</title>
+    <title>My Gallery</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
 <body class="min-h-screen flex flex-col bg-gray-900 text-gray-200">
@@ -11,7 +11,7 @@
 <header class="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 text-gray-100 shadow-lg">
     <div class="container mx-auto flex justify-between items-center p-4">
         <!-- Application Name -->
-        <div class="text-2xl font-bold">Gallery. Sharing is caring</div>
+        <div class="text-2xl font-bold">My Gallery</div>
 
         <!-- Profile Section -->
         <div x-data="{ open: false }" class="relative flex items-center space-x-4">
@@ -37,21 +37,9 @@
 
                 <ul class="py-0">
                     <li>
-                        <a href="#"
-                           class="block px-4 py-2 hover:bg-gray-600 hover:text-white rounded-t-lg">
-                            Profile Settings
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="block px-4 py-2 hover:bg-gray-600 hover:text-white">
-                            Configuration
-                        </a>
-                    </li>
-                    <li>
                         <form th:action="@{/logout}" method="post" class="w-full">
                             <button type="submit"
-                                    class="block w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-b-lg">
+                                    class="block w-full text-left px-4 py-2 hover:bg-red-600 hover:text-white rounded-b-lg rounded-t-lg">
                                 Logout
                             </button>
                         </form>
@@ -65,21 +53,6 @@
 
 <!-- Main Layout -->
 <div class="flex flex-1">
-    <!-- Sidebar -->
-    <nav class="w-64 bg-gray-800 shadow-lg">
-        <ul class="space-y-4 p-4">
-            <li>
-                <a th:href="@{/admin/dashboard}" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-white">Dashboard</a>
-            </li>
-            <li>
-                <a th:href="@{/admin/users}" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-white">User Management</a>
-            </li>
-            <li>
-                <a th:href="@{/admin/roles}" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-white">Role Management</a>
-            </li>
-        </ul>
-    </nav>
-
     <!-- Content Area -->
     <main class="flex-1 bg-gray-900 p-8">
         <div layout:fragment="content"></div>

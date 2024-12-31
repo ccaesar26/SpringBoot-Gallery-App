@@ -1,11 +1,11 @@
 package com.example.rest_api.controller;
 
-import com.example.rest_api.database.model.h2.Role;
-import com.example.rest_api.database.model.h2.RoleEntity;
-import com.example.rest_api.database.model.h2.UserEntity;
-import com.example.rest_api.service.RoleService;
-import com.example.rest_api.service.UserService;
-import com.example.rest_api.service.UserValidatorService;
+import com.example.rest_api.users.database.model.enums.Role;
+import com.example.rest_api.users.database.model.RoleEntity;
+import com.example.rest_api.users.database.model.UserEntity;
+import com.example.rest_api.users.service.RoleService;
+import com.example.rest_api.users.service.UserService;
+import com.example.rest_api.users.service.UserValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/register")
@@ -55,8 +53,10 @@ public class RegisterController {
         user.setUsername(user.getUsername());
         user.setIsOAuthAccount(false); // Classic registration
 
-        Optional<RoleEntity> optionalRole = roleService.findByName(Role.DEFAULT.name());
-        optionalRole.ifPresent(user::addRole);
+        var userRole = new RoleEntity();
+        userRole.setName(Role.DefaultRole.name());
+        roleService.save(userRole);
+        user.addRole(userRole);
 
         userService.save(user);
 

@@ -1,14 +1,12 @@
 package com.example.rest_api.controller;
 
-import com.example.rest_api.database.repository.h2.UserRepository;
-import com.example.rest_api.security.AuthenticatedUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.rest_api.gallery.dto.AlbumWithUsernameDto;
+import com.example.rest_api.users.service.AlbumService;
+import com.example.rest_api.users.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -16,24 +14,41 @@ import java.security.Principal;
 @RequestMapping("/home")
 public class HomeController {
     UserRepository userRepository;
-    private Logger logger = LoggerFactory.getLogger(HomeController.class);
+    private final AlbumService albumService;
 
     @Autowired
-    public HomeController(UserRepository userRepository) {
+    public HomeController(
+            UserRepository userRepository,
+            AlbumService albumService
+    ) {
         this.userRepository = userRepository;
+        this.albumService = albumService;
     }
 
     @GetMapping()
     public String home(Model model, Principal principal) {
-        if (principal instanceof AuthenticatedUser authenticatedUser) {
-            // Since AuthenticatedUser contains email and other attributes
-            model.addAttribute("username", authenticatedUser.getEmail());
-        } else {
-            // Fallback if principal is not AuthenticatedUser for some reason
-            model.addAttribute("username", principal.getName());
-        }
-        return "user/home";
+        String email = principal.getName();
+        var owner = userRepository.findByEmail(email).orElseThrow();
+        var myAlbums = albumService.getAlbumsByOwner(owner.getId());
+        var otherAlbums = albumService.getAllAlbums().stream()
+                .filter(album -> !album.getOwnerId().equals(owner.getId()))
+                .map(album -> {
+                    var user = userRepository.findById(album.getOwnerId()).orElseThrow();
+                    return new AlbumWithUsernameDto(album, user.getUsername());
+                })
+                .toList();
+
+        model.addAttribute("query", "");
+        model.addAttribute("owner", owner);
+        model.addAttribute("myAlbums", myAlbums);
+        model.addAttribute("otherAlbums", otherAlbums);
+        return "home";
     }
 
+    @PostMapping("/search")
+    public String search(@ModelAttribute String query, Model model) {
+        model.addAttribute("searchResults", albumService.searchAlbums(query));
+        return "home";
+    }
 }
 
