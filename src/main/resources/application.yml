@@ -43,21 +43,7 @@ spring:
           dialect: org.hibernate.dialect.MySQLDialect
       hibernate:
         ddl-auto: update
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 364670719208-35gnql2klufnp548ob1d4lppki8drk35.apps.googleusercontent.com
-            client-secret: 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
-            scope: openid,profile,email
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            client-name: Google
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+
   messages:
     basename: validation
 
