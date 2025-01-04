@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findAllByUsername(String username);
 
     @Modifying
-    @Query(value = "update app_user set username=:username, email=:email, password=:password WHERE id=:id", nativeQuery = true)
+    @Query(value = "update users set username=:username, email=:email, password=:password WHERE id=:id", nativeQuery = true)
     void updateUserEntity(Long id, String username, String email, String password);
 
     Optional<UserEntity> findByEmail(String email);
 
     Boolean existsByEmail(String email);
+
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.roles WHERE u.id = :id")
+    UserEntity findByIdWithRoles(@Param("id") Long id);
 }

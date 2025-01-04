@@ -15,10 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(
-        name = "role",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "album_id"})
-)
+@Table(name = "roles")
 public class RoleEntity implements GrantedAuthority {
 
     @Id
@@ -33,7 +30,7 @@ public class RoleEntity implements GrantedAuthority {
     private Long albumId;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Collection<UserEntity> users = new ArrayList<>();
+    private List<UserEntity> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<PermissionEntity> permissions = new ArrayList<>();

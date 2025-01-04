@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
@@ -47,9 +48,13 @@ public class UsersDbConfig {
         factory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         // Optional configuration for naming strategy
-        factory.setJpaPropertyMap(Collections.singletonMap(
-                "hibernate.naming.physical-strategy",
-                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
+//        factory.setJpaPropertyMap(Collections.singletonMap(
+//                "hibernate.naming.physical-strategy",
+//                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
+//        ));
+        factory.setJpaPropertyMap(Map.of(
+                "hibernate.naming.physical-strategy", "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl",
+                "hibernate.hbm2ddl.auto", "update"
         ));
 
         return factory;

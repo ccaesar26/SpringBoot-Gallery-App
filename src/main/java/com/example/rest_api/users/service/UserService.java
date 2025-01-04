@@ -17,10 +17,12 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@Transactional
 public class UserService extends OidcUserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -79,12 +81,16 @@ public class UserService extends OidcUserService implements UserDetailsService {
         return authenticatedUser;
     }
 
-    /* Queries */
     public UserEntity save(UserEntity user) {
-        /* Encrypt password */
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        // Check if the password is already encoded
+        if (!new BCryptPasswordEncoder().matches("", user.getPassword())
+                && !user.getPassword().startsWith("$2a$")) { // BCrypt hashed passwords start with $2a$
+            /* Encrypt password */
+            user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
         return userRepository.save(user);
     }
+
 
     public Boolean existsByEmail(String email){
         return this.userRepository.existsByEmail(email);
@@ -96,5 +102,13 @@ public class UserService extends OidcUserService implements UserDetailsService {
 
     public UserEntity findByEmail(String email) {
         return this.userRepository.findByEmail(email).orElseThrow();
+    }
+
+    public UserEntity findById(Long id) {
+        return this.userRepository.findById(id).orElseThrow();
+    }
+
+    public UserEntity findByIdWithRoles(Long id) {
+        return this.userRepository.findByIdWithRoles(id);
     }
 }

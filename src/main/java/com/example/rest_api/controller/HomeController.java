@@ -1,7 +1,7 @@
 package com.example.rest_api.controller;
 
 import com.example.rest_api.gallery.dto.AlbumWithUsernameDto;
-import com.example.rest_api.users.service.AlbumService;
+import com.example.rest_api.gallery.service.AlbumService;
 import com.example.rest_api.users.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

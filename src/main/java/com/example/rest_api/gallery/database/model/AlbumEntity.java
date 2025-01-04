@@ -1,6 +1,5 @@
-package com.example.rest_api.users.database.model;
+package com.example.rest_api.gallery.database.model;
 
-import com.example.rest_api.gallery.database.model.PhotoEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name="album")
+@Table(name="albums")
 public class AlbumEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +22,7 @@ public class AlbumEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "DATE")
     private LocalDateTime createdAt;
 
     @Column(name = "user_id", nullable = false)

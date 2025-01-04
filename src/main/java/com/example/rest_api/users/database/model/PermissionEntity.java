@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode
-@Table(name = "permission")
+@Table(name = "permissions")
 public class PermissionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class PermissionEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 }

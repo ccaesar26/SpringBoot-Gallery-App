@@ -5,6 +5,5 @@ public enum Role {
     ResourceOwner,
     ResourceEditor,
     ResourceRestrictedEditor,
-    ResourceViewer,
-    ResourceRestrictedViewer
+    ResourceViewer
 }

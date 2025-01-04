@@ -1,6 +1,6 @@
 package com.example.rest_api.gallery.service;
 
-import com.example.rest_api.users.database.model.AlbumEntity;
+import com.example.rest_api.gallery.database.model.AlbumEntity;
 import com.example.rest_api.gallery.database.model.PhotoEntity;
 import com.example.rest_api.gallery.database.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

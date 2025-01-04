@@ -1,6 +1,6 @@
 package com.example.rest_api.gallery.dto;
 
-import com.example.rest_api.users.database.model.AlbumEntity;
+import com.example.rest_api.gallery.database.model.AlbumEntity;
 import lombok.Getter;
 import lombok.Setter;
 

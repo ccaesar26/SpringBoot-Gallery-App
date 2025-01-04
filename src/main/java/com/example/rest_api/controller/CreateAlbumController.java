@@ -1,8 +1,8 @@
 package com.example.rest_api.controller;
 
-import com.example.rest_api.DataInitializer;
-import com.example.rest_api.users.database.model.AlbumEntity;
-import com.example.rest_api.users.service.AlbumService;
+import com.example.rest_api.Helper;
+import com.example.rest_api.gallery.database.model.AlbumEntity;
+import com.example.rest_api.gallery.service.AlbumService;
 import com.example.rest_api.gallery.service.PhotoService;
 import com.example.rest_api.users.database.model.PermissionEntity;
 import com.example.rest_api.users.database.model.enums.Role;
@@ -11,6 +11,9 @@ import com.example.rest_api.users.service.PermissionService;
 import com.example.rest_api.users.service.RoleService;
 import com.example.rest_api.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @Controller
@@ -63,20 +67,37 @@ public class CreateAlbumController {
         // Save the album to the database
         var savedAlbum = albumService.saveAlbum(album);
 
-        // Grant the owner all permissions to the album
+        // Assign the owner role to the owner
         var ownerRole = new RoleEntity();
         ownerRole.setRole(Role.ResourceOwner);
         ownerRole.setAlbumId(savedAlbum.getId());
-        roleService.save(ownerRole);
 
-        if (!roleService.existsByName(Role.ResourceOwner.name())) {
-            for (var permission : DataInitializer.rolePermissions.get(Role.ResourceOwner)) {
+        if (!roleService.existsByNameAndAlbumId(Role.ResourceOwner.name(), savedAlbum.getId())) {
+            ownerRole = roleService.save(ownerRole);
+
+            for (var permission : Helper.rolePermissions.get(Role.ResourceOwner)) {
                 var permissionEntity = new PermissionEntity();
                 permissionEntity.setName(permission.name());
                 permissionEntity.setRole(ownerRole);
                 permissionService.save(permissionEntity);
             }
+        } else {
+            ownerRole = roleService.findByNameAndAlbumId(Role.ResourceOwner.name(), savedAlbum.getId()).get().getFirst();
         }
+
+        owner.addRole(ownerRole);
+        userService.save(owner);
+
+        // Update the SecurityContext with the new role
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var authorities = new ArrayList<GrantedAuthority>(authentication.getAuthorities());
+        authorities.add(ownerRole);
+        var newAuth = new UsernamePasswordAuthenticationToken(
+                authentication.getPrincipal(),
+                authentication.getCredentials(),
+                authorities
+        );
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
 
         // Save the uploaded photos
         var photoList = Arrays.asList(photos);

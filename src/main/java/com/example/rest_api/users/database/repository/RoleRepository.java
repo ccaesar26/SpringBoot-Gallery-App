@@ -14,5 +14,7 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
     public List<RoleEntity> findAllByName(String name);
     Boolean existsByName(String name);
 
-    Optional<RoleEntity> findByNameAndAlbumId(String name, Long albumId);
+    Optional<List<RoleEntity>> findByNameAndAlbumId(String name, Long albumId);
+
+    Boolean existsByNameAndAlbumId(String name, Long albumId);
 }

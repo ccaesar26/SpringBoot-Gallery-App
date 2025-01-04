@@ -1,6 +1,6 @@
-package com.example.rest_api.users.database.repository;
+package com.example.rest_api.gallery.database.repository;
 
-import com.example.rest_api.users.database.model.AlbumEntity;
+import com.example.rest_api.gallery.database.model.AlbumEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

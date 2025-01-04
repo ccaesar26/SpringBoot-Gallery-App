@@ -1,6 +1,5 @@
 package com.example.rest_api.gallery.database.model;
 
-import com.example.rest_api.users.database.model.AlbumEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "photo")
+@Table(name = "photos")
 public class PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +20,7 @@ public class PhotoEntity {
     private String name;
 
     @Lob
-    @Column(name = "image_data")
+    @Column(name = "image_data", columnDefinition = "MEDIUMBLOB")
     private byte[] imageData;
 
     @Column(name = "image_type")

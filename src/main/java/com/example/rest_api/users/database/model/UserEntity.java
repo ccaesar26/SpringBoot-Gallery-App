@@ -45,9 +45,9 @@ public class UserEntity implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "app_users_roles",
+            name = "users_roles",
             joinColumns = @JoinColumn(
-                    name = "app_user_id", referencedColumnName = "id"),
+                    name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
     private List<RoleEntity> roles = new ArrayList<>();

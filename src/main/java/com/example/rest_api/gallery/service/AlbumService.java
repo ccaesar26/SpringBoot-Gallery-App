@@ -1,7 +1,7 @@
-package com.example.rest_api.users.service;
+package com.example.rest_api.gallery.service;
 
-import com.example.rest_api.users.database.model.AlbumEntity;
-import com.example.rest_api.users.database.repository.AlbumRepository;
+import com.example.rest_api.gallery.database.model.AlbumEntity;
+import com.example.rest_api.gallery.database.repository.AlbumRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
