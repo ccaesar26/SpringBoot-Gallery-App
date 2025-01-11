@@ -37,7 +37,6 @@ public class DynamicAuthorizationManager implements AuthorizationManager<Request
         }
 
         var albumId = extractAlbumId(requestUrl);
-        var roles = roleService.findAll();
 
         if (Objects.isNull(albumId)) {
             // If the URL does not contain an album ID, check if the user has DefaultRole
@@ -49,10 +48,17 @@ public class DynamicAuthorizationManager implements AuthorizationManager<Request
             }
         }
 
+        var roles = roleService.findAllByAlbumId(albumId);
+
         for (var grantedAuthority : grantedAuthorities) {
 
             var actualRole = roles.stream()
-                    .filter(role -> role.getName().equals(grantedAuthority.getAuthority()) && albumId.equals(role.getAlbumId()))
+                    .filter(role ->
+                            role.getName().equals(grantedAuthority.getAuthority()) &&
+                                    albumId.equals(role.getAlbumId()) &&
+                            role.getUsers().stream()
+                                    .anyMatch(user -> user.getEmail().equals(authentication.get().getName()))
+                    )
                     .findFirst()
                     .orElse(null);
 

@@ -29,7 +29,7 @@ public class RoleEntity implements GrantedAuthority {
     @Column(name = "album_id")
     private Long albumId;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<UserEntity> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

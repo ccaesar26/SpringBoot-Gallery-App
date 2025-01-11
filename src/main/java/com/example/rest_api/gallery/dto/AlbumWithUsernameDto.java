@@ -9,6 +9,7 @@ import lombok.Setter;
 public class AlbumWithUsernameDto {
     private AlbumEntity album;
     private String username;
+    private boolean canAccess = false;
 
     public AlbumWithUsernameDto(AlbumEntity album, String username) {
         this.album = album;

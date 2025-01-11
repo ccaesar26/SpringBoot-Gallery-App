@@ -47,4 +47,8 @@ public class RoleService {
     public RoleEntity findById(Long id) {
         return roleRepository.findById(id).orElse(null);
     }
+
+    public List<RoleEntity> findAllByAlbumId(Long albumId) {
+        return roleRepository.findAllByAlbumId(albumId);
+    }
 }

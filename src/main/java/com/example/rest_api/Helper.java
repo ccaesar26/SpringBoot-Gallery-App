@@ -39,7 +39,7 @@ public interface Helper {
             Permission.EditRemoveFromResources, List.of("/album/*/deletePhoto"),
             Permission.EditAddToResources, List.of("/album/*/add-photo"),
             Permission.ViewResourcesContent, List.of("/album/*"),
-            Permission.ViewResourcesCover, List.of("/home", "/images/**")
+            Permission.ViewResourcesCover, List.of("/home", "/images/**", "/home/search")
     );
 
     Map<String, String> possibleRolesWithPermissions = Map.of(

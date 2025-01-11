@@ -74,14 +74,17 @@
     <div class="container mx-auto p-4 space-y-8">
         <!-- Search Bar -->
         <div class="flex justify-between items-center bg-gray-800 p-4 rounded-lg shadow-md">
-            <input type="text" placeholder="Search albums..."
-                   class="w-full p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-indigo-500"
-                   th:action="@{/search}" th:field="*{query}"/>
-            <button type="submit"
-                    class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                Search
-            </button>
+            <form th:action="@{/home/search}" method="get" class="flex w-full">
+                <input type="text" name="query" placeholder="Search albums..."
+                       class="w-full p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-indigo-500"
+                       th:value="${query}"/>
+                <button type="submit"
+                        class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Search
+                </button>
+            </form>
         </div>
+
 
         <!-- My Albums Section -->
         <div>
@@ -133,23 +136,45 @@
             <h2 class="text-xl font-semibold mb-4">Other Albums</h2>
             <div class="album-grid">
                 <div th:each="album : ${otherAlbums}">
-                    <a th:href="@{/album/{id}(id=${album.album.id})}" class="album-card">
-                        <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
-                            <div th:if="${album.album.photos.size() > 0}">
-                                <img th:src="@{'/images/' + ${album.album.photos[0].id}}" alt="Album Cover"
-                                     class="album-cover">
+                    <!-- Check if the album is accessible -->
+                    <div th:if="${album.canAccess}">
+                        <a th:href="@{/album/{id}(id=${album.album.id})}" class="album-card">
+                            <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
+                                <div th:if="${album.album.photos.size() > 0}">
+                                    <img th:src="@{'/images/' + ${album.album.photos[0].id}}" alt="Album Cover"
+                                         class="album-cover">
+                                </div>
+                                <div th:if="${album.album.photos == null or album.album.photos.size() == 0}"
+                                     class="text-white text-center">
+                                    No Cover Image
+                                </div>
                             </div>
-                            <div th:if="${album.album.photos == null or album.album.photos.size() == 0}"
-                                 class="text-white text-center">
-                                No Cover Image
+                            <div class="mt-2">
+                                <h3 class="text-lg font-semibold" th:text="${album.album.title}"></h3>
+                                <p class="text-sm text-gray-400" th:text="'Created: ' + ${album.album.createdAt}"></p>
+                                <p class="text-sm text-gray-400" th:text="'Owner: ' + ${album.username}"></p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Display a non-clickable album card with a lock icon -->
+                    <div th:unless="${album.canAccess}">
+                        <div class="album-card" style="cursor: not-allowed;">
+                            <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                </svg>
+                            </div>
+                            <div class="mt-2">
+                                <h3 class="text-lg font-semibold" th:text="${album.album.title}"></h3>
+                                <p class="text-sm text-gray-400">Locked</p>
+                                <p class="text-sm text-gray-400" th:text="'Owner: ' + ${album.username}"></p>
                             </div>
                         </div>
-                        <div class="mt-2">
-                            <h3 class="text-lg font-semibold" th:text="${album.album.title}"></h3>
-                            <p class="text-sm text-gray-400" th:text="'Created: ' + ${album.album.createdAt}"></p>
-                            <p class="text-sm text-gray-400" th:text="'Owner: ' + ${album.username}"></p>
-                        </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
