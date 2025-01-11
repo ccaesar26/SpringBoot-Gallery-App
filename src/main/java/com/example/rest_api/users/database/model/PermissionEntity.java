@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter @Setter @EqualsAndHashCode
 @Table(name = "permissions")
@@ -17,7 +20,6 @@ public class PermissionEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id", nullable = false)
-    private RoleEntity role;
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
+    private List<RoleEntity> roles = new ArrayList<>();
 }

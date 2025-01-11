@@ -32,7 +32,13 @@ public class RoleEntity implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<UserEntity> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "roles_permissions",
+            joinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "permission_id", referencedColumnName = "id"))
     private List<PermissionEntity> permissions = new ArrayList<>();
 
     @Override

@@ -26,9 +26,16 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        for (var permission : Permission.values()) {
+            PermissionEntity permissionEntity = new PermissionEntity();
+            permissionEntity.setName(permission.name());
+            permissionService.save(permissionEntity);
+        }
+
         for (var role : Role.values()) {
             RoleEntity roleEntity = new RoleEntity();
             roleEntity.setRole(role);
+            roleEntity.setPermissions(permissionService.findAllByRole(role));
 
             if (!roleService.existsByName(roleEntity.getName())) {
                 roleEntity = roleService.save(roleEntity);
@@ -36,12 +43,6 @@ public class DataInitializer implements ApplicationRunner {
                 roleEntity = roleService.findByNameAndAlbumId(roleEntity.getName(), null).get().getFirst();
             }
 
-            for (Permission permission : Helper.rolePermissions.get(role)) {
-                PermissionEntity permissionEntity = new PermissionEntity();
-                permissionEntity.setName(permission.name());
-                permissionEntity.setRole(roleEntity);
-                permissionService.save(permissionEntity);
-            }
         }
 
         var defaultRole = new RoleEntity();
