@@ -123,6 +123,7 @@
             <div class="flex items-center space-x-4">
                 <!-- Manage Access Button -->
                 <a href="/album/{id}/manage-permissions"
+                   th:if="${canManageAccess}"
                    class="edit-button flex items-center bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800"
                    th:href="@{/album/{id}/manage-permissions(id=${album.id})}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,6 +133,7 @@
                 </a>
                 <!-- Add Photos Button -->
                 <a href="/album/{id}/add-photo"
+                   th:if="${canAddPhoto}"
                    th:href="@{/album/{id}/add-photo(id=${album.id})}"
                    class="add-photo-button flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +151,7 @@
                 <img class="w-full h-48 object-cover rounded-lg" th:src="@{'/images/' + ${photo.id}}" alt="Photo">
 
                 <!-- Three-dots menu -->
-                <div x-data="{ open: false }" class="absolute top-2 right-2">
+                <div th:if="${canDeletePhoto}" x-data="{ open: false }" class="absolute top-2 right-2">
                     <!-- Button to toggle dropdown -->
                     <button @click="open = !open"
                             class="bg-gray-700 text-white hover:bg-gray-600 p-2 rounded-full shadow-md">

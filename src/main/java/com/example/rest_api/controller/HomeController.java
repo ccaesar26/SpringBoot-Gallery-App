@@ -6,6 +6,7 @@ import com.example.rest_api.users.database.model.enums.Permission;
 import com.example.rest_api.users.database.repository.UserRepository;
 import com.example.rest_api.users.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,23 +40,29 @@ public class HomeController {
                 .filter(album -> !album.getOwnerId().equals(owner.getId()))
                 .map(album -> {
                     var user = userRepository.findById(album.getOwnerId()).orElseThrow();
-                    return new AlbumWithUsernameDto(album, user.getUsername());
+                    var dto = new AlbumWithUsernameDto(album, user.getUsername());
+
+                    // Check if the user has permission to access the album
+                    var roles = roleService.findAllByAlbumId(album.getId());
+                    var grantedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+                    boolean hasPermission = roles.stream().anyMatch(role ->
+                            grantedAuthorities.stream().anyMatch(auth ->
+                                    auth.getAuthority().equals(role.getName()) &&
+                                            role.getUsers().stream().anyMatch(u -> u.getEmail().equals(email))
+                            )
+                    );
+
+                    dto.setCanAccess(hasPermission);
+                    return dto;
                 })
                 .toList();
 
-        for (var album : otherAlbums) {
-            var rolesForAlbum = roleService.findAllByAlbumId(album.getAlbum().getId()).stream().filter(
-                    role -> role.getUsers().stream().anyMatch(user -> user.getId().equals(owner.getId()))
-            ).toList();
-            for (var role : rolesForAlbum) {
-                if (role.getPermissions().stream().anyMatch(
-                        permission -> permission.getName().equals(Permission.ViewResourcesContent.name()))
-                ) {
-                    album.setCanAccess(true);
-                    break;
-                }
-            }
-        }
+        /*
+        * otherAlbums is a list of AlbumWithUsernameDto objects.
+        * AlbumWithUsernameDto has three fields: album, username and canAccess (boolean, default is false).
+        * You need to set the canAccess field to true if the user has the permission to access the album.
+        * */
 
         model.addAttribute("query", "");
         model.addAttribute("owner", owner);
@@ -75,14 +82,30 @@ public class HomeController {
         String email = principal.getName();
         var owner = userRepository.findByEmail(email).orElseThrow();
         var searchResults = new ArrayList<AlbumWithUsernameDto>();
+
         for (var album : albumService.searchAlbums(query)) {
             var user = userRepository.findById(album.getOwnerId()).orElseThrow();
-            searchResults.add(new AlbumWithUsernameDto(album, user.getUsername()));
+            var dto = new AlbumWithUsernameDto(album, user.getUsername());
+
+            // Check if the user has permission to access the album
+            var roles = roleService.findAllByAlbumId(album.getId());
+            var grantedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+            boolean hasPermission = roles.stream().anyMatch(role ->
+                    grantedAuthorities.stream().anyMatch(auth ->
+                            auth.getAuthority().equals(role.getName()) &&
+                                    role.getUsers().stream().anyMatch(u -> u.getEmail().equals(email))
+                    )
+            );
+
+            dto.setCanAccess(hasPermission);
+            searchResults.add(dto);
         }
 
         model.addAttribute("query", query);
         model.addAttribute("searchResults", searchResults);
         return "search"; // Update this to your search results template name
     }
+
 }
 

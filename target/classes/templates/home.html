@@ -14,6 +14,17 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 16px;
+            cursor: default;
+            position: relative;
+        }
+
+        .clickable {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clickable:hover {
+            background-color: #374151; /* Slightly darker gray on hover */
         }
 
         /* Ensure the cover images are square and fit within the card */
@@ -67,6 +78,10 @@
             color: #ccc;
             font-size: 14px;
         }
+
+        .lock-icon {
+            margin: 8px;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +109,7 @@
                 <!-- Check if myAlbums is empty -->
                 <div th:if="${not #lists.isEmpty(myAlbums)}">
                     <div th:each="album : ${myAlbums}">
-                        <a th:href="@{/album/{id}(id=${album.id})}" class="album-card">
+                        <a th:href="@{/album/{id}(id=${album.id})}" class="album-card clickable">
                             <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
                                 <div th:if="${album.photos.size() > 0}">
                                     <img th:src="@{'/images/' + ${album.photos[0].id}}" alt="Album Cover"
@@ -138,7 +153,7 @@
                 <div th:each="album : ${otherAlbums}">
                     <!-- Check if the album is accessible -->
                     <div th:if="${album.canAccess}">
-                        <a th:href="@{/album/{id}(id=${album.album.id})}" class="album-card">
+                        <a th:href="@{/album/{id}(id=${album.album.id})}" class="album-card clickable">
                             <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
                                 <div th:if="${album.album.photos.size() > 0}">
                                     <img th:src="@{'/images/' + ${album.album.photos[0].id}}" alt="Album Cover"
@@ -158,26 +173,33 @@
                     </div>
 
                     <!-- Display a non-clickable album card with a lock icon -->
-                    <div th:unless="${album.canAccess}">
-                        <div class="album-card" style="cursor: not-allowed;">
-                            <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                    <div th:if="${!album.canAccess}" class="album-card">
+                        <div class="h-48 bg-gray-600 flex items-center justify-center rounded-lg">
+                            <div th:if="${album.album.photos.size() > 0}">
+                                <img th:src="@{'/images/' + ${album.album.photos[0].id}}" alt="Album Cover"
+                                     class="album-cover">
+                            </div>
+                            <div th:if="${album.album.photos == null or album.album.photos.size() == 0}"
+                                 class="text-white text-center">
+                                No Cover Image
+                            </div>
+                            <div class="absolute top-4 right-4 bg-red-600 p-2 rounded-full lock-icon">
+                                <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"
+                                          stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <div class="mt-2">
-                                <h3 class="text-lg font-semibold" th:text="${album.album.title}"></h3>
-                                <p class="text-sm text-gray-400">Locked</p>
-                                <p class="text-sm text-gray-400" th:text="'Owner: ' + ${album.username}"></p>
-                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <h3 class="text-lg font-semibold text-gray-400" th:text="${album.album.title}"></h3>
+                            <p class="text-sm text-gray-500" th:text="'Created: ' + ${album.album.createdAt}"></p>
+                            <p class="text-sm text-gray-500" th:text="'Owner: ' + ${album.username}"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 </body>

@@ -12,6 +12,7 @@ import com.example.rest_api.users.service.PermissionService;
 import com.example.rest_api.users.service.RoleService;
 import com.example.rest_api.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -19,9 +20,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.rest_api.Helper.hasPermission;
 
 @Controller
 @RequestMapping("/album")
@@ -31,24 +35,36 @@ public class AlbumController {
     private final PhotoService photoService;
     private final UserService userService;
     private final RoleService roleService;
-    private final PermissionService permissionService;
 
     @Autowired
-    public AlbumController(AlbumService albumService, PhotoService photoService, UserService userService, RoleService roleService, PermissionService permissionService) {
+    public AlbumController(AlbumService albumService, PhotoService photoService, UserService userService, RoleService roleService) {
         this.albumService = albumService;
         this.photoService = photoService;
         this.userService = userService;
         this.roleService = roleService;
-        this.permissionService = permissionService;
     }
 
     // View a specific album by ID
     @GetMapping("/{id}")
-    public String viewAlbum(@PathVariable Long id, Model model) {
+    public String viewAlbum(@PathVariable Long id, Model model, Principal principal) {
         var album = albumService.getAlbumById(id);
         var photos = photoService.getPhotosByAlbumId(id);
+
+        String email = principal.getName();
+        var user = userService.findByEmail(email);
+        var roles = roleService.findAllByAlbumId(id);
+        var grantedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        boolean canAddPhoto = hasPermission(roles, grantedAuthorities, email, Permission.EditAddToResources);
+        boolean canDeletePhoto = hasPermission(roles, grantedAuthorities, email, Permission.EditRemoveFromResources);
+        boolean canManageAccess = hasPermission(roles, grantedAuthorities, email, Permission.EditUsers);
+
+
         model.addAttribute("album", album);
         model.addAttribute("photos", photos);
+        model.addAttribute("canAddPhoto", canAddPhoto);
+        model.addAttribute("canDeletePhoto", canDeletePhoto);
+        model.addAttribute("canManageAccess", canManageAccess);
         return "album"; // Thymeleaf template for the album detail view
     }
 
